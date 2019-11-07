@@ -1,6 +1,7 @@
-# Encoding: utf-8
+# frozen_string_literal: true
+
 # Cloud Foundry Java Buildpack
-# Copyright 2013-2016 the original author or authors.
+# Copyright 2013-2019 the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,34 +24,39 @@ require 'spec_helper'
 require 'yaml'
 
 describe JavaBuildpack::Util::ConfigurationUtils do
-  include_context 'logging_helper'
+  include_context 'with logging help'
 
   let(:test_data) do
-    { 'foo'      => { 'one' => '1', 'two' => 2 },
-      'bar'      => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
-      'version'  => '1.7.1',
-      'not_here' => nil
-    }
+    { 'foo' => { 'one' => '1', 'two' => 2 },
+      'bar' => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
+      'version' => '1.7.1',
+      'not_here' => nil }
   end
 
   it 'not load absent configuration file' do
-    allow_any_instance_of(Pathname).to receive(:exist?).and_return(false)
+    pathname = instance_double(Pathname)
+    allow(Pathname).to receive(:new).and_return(pathname)
+    allow(pathname).to receive(:exist?).and_return(false)
+
     expect(described_class.load('test')).to eq({})
   end
 
   it 'write configuration file' do
-    test_file        = Pathname.new(File.expand_path('../../../config/open_jdk_jre.yml', File.dirname(__FILE__)))
+    test_file = Pathname.new(File.expand_path('../../../config/open_jdk_jre.yml', File.dirname(__FILE__)))
     original_content = file_contents test_file
-    loaded_content   = described_class.load('open_jdk_jre', false)
+    loaded_content = described_class.load('open_jdk_jre', false)
     described_class.write('open_jdk_jre', loaded_content)
     expect(described_class.load('open_jdk_jre', false)).to eq(loaded_content)
-    expect(file_contents test_file).to eq(original_content)
+    expect(file_contents(test_file)).to eq(original_content)
   end
 
   context do
 
     before do
-      allow_any_instance_of(Pathname).to receive(:exist?).and_return(true)
+      pathname = instance_double(Pathname)
+      allow(Pathname).to receive(:new).and_return(pathname)
+      allow(pathname).to receive(:exist?).and_return(true)
+
       allow(YAML).to receive(:load_file).and_return(test_data)
     end
 
@@ -59,8 +65,8 @@ describe JavaBuildpack::Util::ConfigurationUtils do
     end
 
     it 'load configuration file and clean nil values' do
-      expect(described_class.load('test', true)).to eq('foo'     => { 'one' => '1', 'two' => 2 },
-                                                       'bar'     => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
+      expect(described_class.load('test', true)).to eq('foo' => { 'one' => '1', 'two' => 2 },
+                                                       'bar' => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
                                                        'version' => '1.7.1')
     end
 
@@ -72,8 +78,8 @@ describe JavaBuildpack::Util::ConfigurationUtils do
 
       it 'overlays matching environment variables' do
 
-        expect(described_class.load('test')).to eq('foo'     => { 'one' => '1', 'two' => 2 },
-                                                   'bar'     => { 'alpha' => { 'one' => 3, 'two' => 'dog' } },
+        expect(described_class.load('test')).to eq('foo' => { 'one' => '1', 'two' => 2 },
+                                                   'bar' => { 'alpha' => { 'one' => 3, 'two' => 'dog' } },
                                                    'version' => '1.7.1')
       end
 
@@ -86,8 +92,8 @@ describe JavaBuildpack::Util::ConfigurationUtils do
       end
 
       it 'overlays simple matching environment variable' do
-        expect(described_class.load('test')).to eq('foo'     => { 'one' => '1', 'two' => 2 },
-                                                   'bar'     => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
+        expect(described_class.load('test')).to eq('foo' => { 'one' => '1', 'two' => 2 },
+                                                   'bar' => { 'alpha' => { 'one' => 'cat', 'two' => 'dog' } },
                                                    'version' => '1.8.+')
       end
 
@@ -100,8 +106,8 @@ describe JavaBuildpack::Util::ConfigurationUtils do
       end
 
       it 'raises an exception when invalid override value is specified' do
-        expect { described_class.load('test') }.to raise_error(
-          /User configuration value in environment variable JBP_CONFIG_TEST is not valid/)
+        expect { described_class.load('test') }
+          .to raise_error(/User configuration value in environment variable JBP_CONFIG_TEST is not valid/)
       end
 
     end
@@ -113,8 +119,8 @@ describe JavaBuildpack::Util::ConfigurationUtils do
       end
 
       it 'diagnoses invalid YAML syntax' do
-        expect { described_class.load('test') }.to raise_error(
-          /User configuration value in environment variable JBP_CONFIG_TEST has invalid syntax/)
+        expect { described_class.load('test') }
+          .to raise_error(/User configuration value in environment variable JBP_CONFIG_TEST has invalid syntax/)
       end
 
     end
@@ -128,6 +134,7 @@ describe JavaBuildpack::Util::ConfigurationUtils do
     File.open(file, 'r') do |f|
       f.each do |line|
         break if line =~ /^---/
+
         header << line
       end
     end
