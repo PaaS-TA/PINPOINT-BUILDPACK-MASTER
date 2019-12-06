@@ -9,7 +9,7 @@ To pin the version of dependencies used by the buildpack to the ones currently r
 $ bundle install
 $ bundle exec rake clean package OFFLINE=true PINNED=true
 ...
-Creating build/java-buildpack-offline-cfd6b17.zip
+Creating build/java-buildpack-pinpoint-monitoring-cfd6b17.zip
 ```
 ## License
 This buildpack is released under version 2.0 of the [Apache License][].
