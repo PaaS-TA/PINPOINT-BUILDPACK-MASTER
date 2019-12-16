@@ -1,4 +1,4 @@
-# PaaSTA Pinpoint Buildpack
+# PaaS-TA Pinpoint Buildpack
 
 ### Package
 The offline package is a version of the buildpack designed to run without access to a network.  It packages the latest version of each dependency (as configured in the [`config/` directory][]) and [disables `remote_downloads`][]. This package is about 180M in size.  To create the offline package, use the `OFFLINE=true` argument:
