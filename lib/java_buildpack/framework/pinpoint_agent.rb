@@ -47,7 +47,8 @@ module JavaBuildpack
 
         @droplet.java_opts
             .add_javaagent(@droplet.sandbox + 'pinpoint-bootstrap-1.8.4.jar') # agent.jar 파일 경로
-            .add_system_property('pinpoint.agentId','`cat /proc/sys/kernel/random/uuid| cksum | cut -f1 -d" "`')
+            #.add_system_property('pinpoint.agentId','`cat /proc/sys/kernel/random/uuid| cksum | cut -f1 -d" "`')
+            .add_system_property('pinpoint.agentId', @agent_id)
             .add_system_property('pinpoint.applicationName', @application_name)
 
 
