@@ -40,7 +40,7 @@ module JavaBuildpack
         
 
         #@agent_id = SecureRandom.urlsafe_base64
-        @agent_id = @application_name
+        @agent_id = @application_name.split(".")[0]
 
         @droplet.environment_variables
            .add_environment_variable('AGENT_PATH',@droplet.sandbox)# Pinpoint Agent 경로 (파일명 제외한 경로만)
@@ -81,7 +81,7 @@ module JavaBuildpack
         collector_tcp_port = credentials['collector_tcp_port']
         #agent_id = credentials['agent_id']
         #agent_id = SecureRandom.urlsafe_base64
-        application_name = credentials['application_name'] || @application.details['application_uris'][0] || @application.details['application_name']
+        application_name = credentials['application_name'] || @application.details['application_uris'][0]
 
         [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
