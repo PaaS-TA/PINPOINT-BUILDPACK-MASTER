@@ -80,7 +80,7 @@ module JavaBuildpack
         collector_tcp_port = credentials['collector_tcp_port']
         #agent_id = credentials['agent_id']
         #agent_id = SecureRandom.urlsafe_base64
-        application_name = credentials['application_name'] || ( @application.detail.['organization_name'] + '/' + @application.detail.['space_name'] + '/' + @application.detail.['name'] )
+        application_name = credentials['application_name'] || ( @application.details.['organization_name'] + '/' + @application.details.['space_name'] + '/' + @application.details.['name'] )
 
         [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
