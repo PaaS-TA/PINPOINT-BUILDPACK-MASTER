@@ -40,7 +40,7 @@ module JavaBuildpack
         
 
         #@agent_id = SecureRandom.urlsafe_base64
-        @agent_id = Digest::SHA1.hexdigest(@application_name).to_base_62  
+        @agent_id = Digest::SHA1.hexdigest(@application_name).hex.to_base_62  
 
         @droplet.environment_variables
            .add_environment_variable('AGENT_PATH',@droplet.sandbox)# Pinpoint Agent 경로 (파일명 제외한 경로만)
