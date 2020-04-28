@@ -49,6 +49,7 @@ module JavaBuildpack
 
       def release
         #@agent_id = SecureRandom.urlsafe_base64
+        puts @application_name
         @agent_id = MD5hex2base64(@application_name)
 
         @droplet.environment_variables
@@ -101,10 +102,8 @@ module JavaBuildpack
         #agent_id = credentials['agent_id']
         #agent_id = SecureRandom.urlsafe_base64
         #application_name = credentials['application_name'] || @application.details['application_uris'][0].split('.')[0]
-        application_name = credentials['application_name'] || @application.details['application_uris'][0]
-        puts application_name
+        application_name = credentials['application_name'] || @application.details['application_uris'][0].to_s
         application_name = application_name + @configuration['instance_index']
-        puts application_name
 
         [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
