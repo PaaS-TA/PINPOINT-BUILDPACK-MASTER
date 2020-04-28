@@ -25,7 +25,11 @@ module JavaBuildpack
       end
 
       def compile
-        
+        resources_dir = Pathname.new(File.expand_path('../../../resources', __dir__)).freeze
+        default_conf_dir = resources_dir + @droplet.component_id + 'defaults'
+
+        copy_appd_default_configuration(default_conf_dir)
+
         @droplet.copy_resources
 
         #기존 ip, port 값을 읽어와서 인자로 입력하는 것도 가능할 것.
@@ -40,7 +44,7 @@ module JavaBuildpack
         
 
         #@agent_id = SecureRandom.urlsafe_base64
-        @agent_id = @application_name + @application_name + @application_name + @application_name + @application_name + @configuration['instance_index']
+        @agent_id = @application_name
 
         @droplet.environment_variables
            .add_environment_variable('AGENT_PATH',@droplet.sandbox)# Pinpoint Agent 경로 (파일명 제외한 경로만)
@@ -82,7 +86,7 @@ module JavaBuildpack
         #agent_id = credentials['agent_id']
         #agent_id = SecureRandom.urlsafe_base64
         application_name = credentials['application_name'] || @application.details['application_uris'][0].split('.')[0]
-        application_name = application_name
+        application_name = application_name + @configuration['instance_index']
 
         [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
