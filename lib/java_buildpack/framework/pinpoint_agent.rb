@@ -14,7 +14,7 @@ module JavaBuildpack
       def initialize(context)
         super(context)
 
-        @collector_host, @collector_span_port, @collector_stat_port, @collector_tcp_port, @application_name, @agent_id = find_pinpoint_credentials if supports?
+        @collector_host, @collector_span_port, @collector_stat_port, @collector_tcp_port, @application_name = find_pinpoint_credentials if supports?
 
       end
 
@@ -40,7 +40,7 @@ module JavaBuildpack
         
 
         #@agent_id = SecureRandom.urlsafe_base64
-        #@agent_id = @application_name
+        @agent_id = @application_name
 
         @droplet.environment_variables
            .add_environment_variable('AGENT_PATH',@droplet.sandbox)# Pinpoint Agent 경로 (파일명 제외한 경로만)
@@ -83,9 +83,8 @@ module JavaBuildpack
         #agent_id = SecureRandom.urlsafe_base64
         application_name = credentials['application_name'] || @application.details['application_uris'][0].split('.')[0]
         application_name = application_name + 'jq -r -n "\"_$CF_INSTANCE_INDEX\""'
-        agent_id = application_name
 
-        [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name, agnet_id]
+        [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
 
       # name, label, tags중 하나에 'pinpoint' 라는 문자가 있고 credentials에 collector_host가 있는 경우를 찾는다.
