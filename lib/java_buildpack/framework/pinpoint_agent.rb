@@ -102,7 +102,9 @@ module JavaBuildpack
         #agent_id = SecureRandom.urlsafe_base64
         #application_name = credentials['application_name'] || @application.details['application_uris'][0].split('.')[0]
         application_name = credentials['application_name'] || @application.details['application_uris'][0]
+        puts application_name
         application_name = application_name + @configuration['instance_index']
+        puts application_name
 
         [collector_host, collector_span_port, collector_stat_port, collector_tcp_port, application_name]
       end
