@@ -10,15 +10,6 @@ module JavaBuildpack
 
     class PinpointAgent < JavaBuildpack::Component::BaseComponent
       
-      def MD5hex2base64(str)
-        h1=[].clear
-
-        # split the 32 byte hex into a 16 byte array
-        16.times{ h1.push(str.slice!(0,2).hex) }
-        # pack (C* = unsigned char), (m = base64 encoded output)
-        [h1.pack("C*")].pack("m")
-      end
-
       def initialize(context)
         super(context)
 
@@ -81,6 +72,15 @@ module JavaBuildpack
         Dir.glob(@droplet.sandbox + 'ver*') do |target_directory|
           FileUtils.cp_r "#{default_conf_dir}/.", target_directory
         end
+      end
+      
+      def MD5hex2base64(str)
+        h1=[].clear
+
+        # split the 32 byte hex into a 16 byte array
+        16.times{ h1.push(str.slice!(0,2).hex) }
+        # pack (C* = unsigned char), (m = base64 encoded output)
+        [h1.pack("C*")].pack("m")
       end
 
       private
