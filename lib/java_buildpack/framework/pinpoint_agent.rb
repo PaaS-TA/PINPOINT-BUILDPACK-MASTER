@@ -37,12 +37,9 @@ module JavaBuildpack
         shell "sed -i s/profiler.collector.span.port=9996/profiler.collector.span.port=#{@collector_span_port}/ #{@droplet.sandbox}/pinpoint.config"
         shell "sed -i s/profiler.collector.stat.port=9995/profiler.collector.stat.port=#{@collector_stat_port}/ #{@droplet.sandbox}/pinpoint.config"
         shell "sed -i s/profiler.collector.tcp.port=9994/profiler.collector.tcp.port=#{@collector_tcp_port}/ #{@droplet.sandbox}/pinpoint.config"
-
       end
 
       def release
-        
-
         #@agent_id = SecureRandom.urlsafe_base64
         @agent_id = @application_name
 
@@ -55,8 +52,6 @@ module JavaBuildpack
             .add_system_property('pinpoint.agentId', @agent_id)
             .add_system_property('pinpoint.applicationName', @application_name)
 
-
-
 =begin
         shell "export AGENT_PATH='/app/.java-buildpack/pinpoint_agent'"
         shell "export CATALINA_OPTS='$CATALINA_OPTS -javaagent:$AGENT_PATH/pinpoint-bootstrap-1.6.0-SNAPSHOT.jar'"
@@ -65,6 +60,18 @@ module JavaBuildpack
 =end
 
 
+      end
+
+      # Copy default configuration present in resources folder of app_dynamics_agent ver* directories present in sandbox
+      #
+      # @param [Pathname] default_conf_dir the 'defaults' directory present in app_dynamics_agent resources.
+      # @return [Void]
+      def copy_appd_default_configuration(default_conf_dir)
+        return unless default_conf_dir.exist?
+
+        Dir.glob(@droplet.sandbox + 'ver*') do |target_directory|
+          FileUtils.cp_r "#{default_conf_dir}/.", target_directory
+        end
       end
 
       private
@@ -94,18 +101,6 @@ module JavaBuildpack
       # name, label, tags중 하나에 'pinpoint' 라는 문자가 있고 credentials에 collector_host가 있는 경우를 찾는다.
       def supports?
         @application.services.one_service? FILTER, 'collector_host'
-      end
-      
-      # Copy default configuration present in resources folder of app_dynamics_agent ver* directories present in sandbox
-      #
-      # @param [Pathname] default_conf_dir the 'defaults' directory present in app_dynamics_agent resources.
-      # @return [Void]
-      def copy_appd_default_configuration(default_conf_dir)
-        return unless default_conf_dir.exist?
-
-        Dir.glob(@droplet.sandbox + 'ver*') do |target_directory|
-          FileUtils.cp_r "#{default_conf_dir}/.", target_directory
-        end
       end
     end
   end
