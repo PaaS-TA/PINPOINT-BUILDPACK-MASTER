@@ -15,4 +15,4 @@
 
 # Configuration for the AppDynamics framework
 ---
-instance_index: $(jq -r -n "\":$CF_INSTANCE_INDEX\"")
+instance_index: $(jq -r -n "\"_$CF_INSTANCE_INDEX\"")
